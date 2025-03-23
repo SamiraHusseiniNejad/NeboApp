@@ -1,0 +1,32 @@
+name: Build Kivy Android APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-8-jdk wget unzip
+          pip install --upgrade pip
+          pip install kivy buildozer cython
+          pip install transformers torch
+
+      - name: Setup buildozer
+        run: |
+          buildozer init
+          buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: NeboApp
+          path: bin/*.apk
